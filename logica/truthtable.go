@@ -98,10 +98,10 @@ func Props(expression string) map[rune]bool {
 	return result
 }
 
-// GetCombinations gera todas as combinações possíveis de valores booleanos para as proposições na expressão.
 func GetCombinations(exp string) []map[rune]bool {
 	// Obtém as proposições únicas na expressão
 	props := Props(exp)
+	
 	// Cria uma lista ordenada de proposições
 	propList := make([]rune, 0, len(props))
 	for prop := range props {
@@ -115,6 +115,7 @@ func GetCombinations(exp string) []map[rune]bool {
 	// Função recursiva para gerar as combinações
 	var generateComb func(int, map[rune]bool)
 	generateComb = func(index int, current map[rune]bool) {
+	
 		// Quando todas as proposições foram processadas, adiciona a combinação resultante à lista de resultados
 		if index == len(propList) {
 			newMap := make(map[rune]bool)
@@ -128,6 +129,7 @@ func GetCombinations(exp string) []map[rune]bool {
 		// Define a proposição atual como verdadeira e gera as combinações para o próximo índice
 		current[propList[index]] = true
 		generateComb(index+1, current)
+		
 		// Define a proposição atual como falsa e gera as combinações para o próximo índice
 		current[propList[index]] = false
 		generateComb(index+1, current)
@@ -136,6 +138,5 @@ func GetCombinations(exp string) []map[rune]bool {
 	// Inicia o processo de geração de combinações com o índice inicial e um mapa vazio
 	generateComb(0, make(map[rune]bool))
 
-	// Retorna a lista de todas as combinações geradas
 	return result
 }
