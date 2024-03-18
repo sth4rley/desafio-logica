@@ -1,31 +1,50 @@
 package main
 
 import (
-	"desafio/sintaxe"
+	"desafio/logica"
+	"desafio/tui"
 	"fmt"
-	"os"
 )
 
-const (
-	Reset = "\033[0m"
-	Red   = "\033[31m"
-	Green = "\033[32m"
-)
+func colorRed(text string) string {
+	return "\033[31m" + text + "\033[0m"
+}
 
 func main() {
+
 	var exp string
-	fmt.Print("Insira uma expressao logica: ")
 
-	if _, err := fmt.Scan(&exp); err != nil {
-		fmt.Println("Erro ao ler a entrada:", err)
-		os.Exit(1)
-	}
+	fmt.Printf("\nInsira uma expressão lógica (notação polonesa):\n> ")
+	fmt.Scan(&exp)
+	fmt.Printf("\n")
 
-	if sintaxe.Verificar(exp) {
-		fmt.Println(Green + "A expressao " + exp + " eh valida" + Reset)
+	if !logica.Check(exp) {
+		fmt.Printf(colorRed("Erro: A expressão inserida é inválida.\n"))
 	} else {
-		fmt.Println(Red + "A expressao " + exp + " eh invalida" + Reset)
+		truthtable := logica.TruthTable(exp)
+		t := 0
+		f := 0
+
+		for _, itrp := range truthtable {
+			if itrp[exp] {
+				t++
+			} else {
+				f++
+			}
+		}
+
+		tui.ShowTruthtable(truthtable)
+
+		fmt.Println("true: ", t)
+		fmt.Println("false: ", f)
+		if t == 0 {
+			fmt.Println("contradicao")
+		} else if f == 0 {
+			fmt.Println("tautologia")
+		} else {
+			fmt.Println("contigencia")
+		}
+
 	}
 
-	fmt.Println()
 }
