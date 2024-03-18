@@ -99,24 +99,19 @@ func Props(expression string) map[rune]bool {
 }
 
 func GetCombinations(exp string) []map[rune]bool {
-	// Obtém as proposições únicas na expressão
 	props := Props(exp)
-	
-	// Cria uma lista ordenada de proposições
+
 	propList := make([]rune, 0, len(props))
 	for prop := range props {
 		propList = append(propList, prop)
 	}
 	sort.Slice(propList, func(i, j int) bool { return propList[i] < propList[j] })
 
-	// Inicializa uma lista para armazenar as combinações
 	result := make([]map[rune]bool, 0)
 
-	// Função recursiva para gerar as combinações
 	var generateComb func(int, map[rune]bool)
 	generateComb = func(index int, current map[rune]bool) {
-	
-		// Quando todas as proposições foram processadas, adiciona a combinação resultante à lista de resultados
+
 		if index == len(propList) {
 			newMap := make(map[rune]bool)
 			for k, v := range current {
@@ -126,16 +121,13 @@ func GetCombinations(exp string) []map[rune]bool {
 			return
 		}
 
-		// Define a proposição atual como verdadeira e gera as combinações para o próximo índice
 		current[propList[index]] = true
 		generateComb(index+1, current)
-		
-		// Define a proposição atual como falsa e gera as combinações para o próximo índice
+
 		current[propList[index]] = false
 		generateComb(index+1, current)
 	}
 
-	// Inicia o processo de geração de combinações com o índice inicial e um mapa vazio
 	generateComb(0, make(map[rune]bool))
 
 	return result

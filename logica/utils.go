@@ -17,7 +17,7 @@ func (s *Stack) pop() Node {
 		*s = (*s)[:len(*s)-1]
 		return aux
 	}
-	return Node{} // !! caso esteja vazia retorna falso??
+	return Node{}
 }
 
 func (s *Stack) top() Node {
