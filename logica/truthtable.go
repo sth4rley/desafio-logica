@@ -4,7 +4,7 @@ import (
 	"sort"
 )
 
-var logicOperators = map[rune]bool{
+var LogicOperators = map[rune]bool{
 	'~': true,
 	'v': true,
 	'^': true,
@@ -36,13 +36,13 @@ func Evaluate(expression string, values map[rune]bool) map[string]bool {
 		var exp string
 		var res bool
 
-		if logicOperators[chr] {
+		if LogicOperators[chr] {
 
 			first := s.pop()
 
 			if chr == '~' { // se for o operador de negacao
 
-				exp = first.expression + "~"
+				exp = /*"(" +*/ "~" + first.expression /* + ")"*/
 				res = !first.value
 
 			} else { // se for outro operador
@@ -50,22 +50,22 @@ func Evaluate(expression string, values map[rune]bool) map[string]bool {
 				second := s.pop()
 
 				if chr == 'v' {
-					exp = second.expression + first.expression + "v"
+					exp = "(" + second.expression + "v" + first.expression + ")"
 					res = first.value || second.value
 				}
 
 				if chr == '^' {
-					exp = second.expression + first.expression + "^"
+					exp = "(" + second.expression + "^" + first.expression + ")"
 					res = first.value && second.value
 				}
 
 				if chr == '-' {
-					exp = second.expression + first.expression + "-"
+					exp = "(" + second.expression + "-" + first.expression + ")"
 					res = !(second.value && !first.value)
 				}
 
 				if chr == '=' {
-					exp = second.expression + first.expression + "="
+					exp = "(" + second.expression + "=" + first.expression + ")"
 					res = first.value == second.value
 				}
 

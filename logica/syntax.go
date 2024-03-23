@@ -25,7 +25,7 @@ func Check(expression string) bool {
 
 	for _, chr := range expression {
 
-		if logicOperators[chr] {
+		if LogicOperators[chr] {
 
 			if chr == '~' {
 				if len(s) < 1 {
