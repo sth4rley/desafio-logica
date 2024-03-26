@@ -12,24 +12,94 @@ var LogicOperators = map[rune]bool{
 	'=': true,
 }
 
-func TruthTable(expression string) []map[string]bool {
+func Classificacao(tt []map[string]bool, main_exp string) string {
+	t, f := 0, 0
 
-	combinations := GetCombinations(expression)
-
-	truthtable := make([]map[string]bool, 0)
-
-	for _, combination := range combinations {
-		truthtable = append(truthtable, Evaluate(expression, combination))
+	for _, el := range tt {
+		if el[main_exp] {
+			t++
+		} else {
+			f++
+		}
 	}
 
-	return truthtable
+	if f == 0 {
+		return "tautologia"
+	}
+	if t == 0 {
+		return "contradicao"
+	}
+	return "contingencia"
 }
 
-func Evaluate(expression string, values map[rune]bool) map[string]bool {
+func FND(tt []map[string]bool, main_exp string) string {
+	fn := ""
+	props := Props(main_exp)
+
+	for _, el := range tt {
+		if el[main_exp] { // para cada interpretacao verdadeira
+			fn += "("
+			for c := range props { // verifica cada propriedade
+				if !el[string(c)] { // se a prop for falsa adiciona a negacao
+					fn += "~"
+				}
+				fn += string(c) + "^"
+			}
+			fn = fn[:len(fn)-1] + ")v"
+		}
+	}
+
+	if len(fn) > 0 {
+		fn = fn[:len(fn)-1]
+	}
+
+	return fn
+}
+
+func FNC(tt []map[string]bool, main_exp string) string {
+	fn := ""
+	props := Props(main_exp)
+
+	for _, el := range tt {
+		if !el[main_exp] { // para cada interpretacao falsa
+			fn += "("
+			for c := range props { // verifica cada propriedade
+				if el[string(c)] { // se a prop for verdadeira adiciona a negacao
+					fn += "~"
+				}
+				fn += string(c) + "v"
+			}
+			fn = fn[:len(fn)-1] + ")^"
+		}
+	}
+
+	if len(fn) > 0 {
+		fn = fn[:len(fn)-1]
+	}
+
+	return fn
+}
+
+func Semantica(expression string) ([]map[string]bool, string, string, string) {
+	combinations := GetCombinations(expression)
+	truthtable := make([]map[string]bool, 0)
+	main_exp := ""
+
+	for _, combination := range combinations {
+		part, mexp := Evaluate(expression, combination)
+		truthtable = append(truthtable, part)
+		main_exp = mexp
+	}
+
+	return truthtable, FNC(truthtable, main_exp), FND(truthtable, main_exp), Classificacao(truthtable, main_exp)
+}
+
+func Evaluate(expression string, values map[rune]bool) (map[string]bool, string) {
 
 	subexpressions := make(map[string]bool)
 
 	var s Stack
+	var main_exp string
 
 	for _, chr := range expression {
 
@@ -81,9 +151,11 @@ func Evaluate(expression string, values map[rune]bool) map[string]bool {
 		s.push(Node{exp, res})
 		subexpressions[exp] = res
 
+		main_exp = exp
+
 	}
 
-	return subexpressions
+	return subexpressions, main_exp
 }
 
 func Props(expression string) map[rune]bool {
